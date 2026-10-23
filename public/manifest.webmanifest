@@ -1,0 +1,14 @@
+{
+  "name": "Розумний калькулятор",
+  "short_name": "Калькулятор",
+  "description": "Калькулятор з постійною історією, назвами, мітками й примітками.",
+  "lang": "uk",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#2f5d8a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
