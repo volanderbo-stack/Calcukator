@@ -39,19 +39,6 @@ const KEYS: Key[] = [
   { label: '+', insert: ' + ', className: 'key-op' },
 ];
 
-// Оператори, якими продовжують обчислення від щойно отриманого результату.
-const CONTINUE_OPERATORS: Record<string, string> = {
-  '+': ' + ',
-  '-': ' − ',
-  '−': ' − ',
-  '*': ' × ',
-  '×': ' × ',
-  '/': ' ÷ ',
-  '÷': ' ÷ ',
-  ':': ' ÷ ',
-  '%': '%',
-};
-
 // На сенсорних екранах не відкриваємо системну клавіатуру: є власна.
 const finePointer = typeof matchMedia === 'function' && matchMedia('(pointer: fine)').matches;
 
@@ -89,27 +76,8 @@ export function Calculator({ decimals, reopen, onCompute, onEditEntry, onCopy }:
     return formatted.plain === expr.trim() ? null : formatted;
   }, [expr, outcome, decimals]);
 
-  /** Після «=» оператор продовжує рахунок від результату, а будь-що інше починає новий вираз. */
-  function continueAfterResult(entry: Entry, typed: string) {
-    const text = typed.trimStart();
-    const operator = CONTINUE_OPERATORS[text[0]];
-    update(operator ? continuationBase(entry, decimals) + operator + text.slice(1).trimStart() : text);
-  }
-
-  function handleChange(next: string) {
-    if (outcome?.kind === 'result' && next.length > expr.length && next.startsWith(expr)) {
-      continueAfterResult(outcome.entry, next.slice(expr.length));
-      return;
-    }
-    setExpr(next);
-    setOutcome(null);
-  }
-
+  // Після «=» вираз лишається в полі: нове введення просто дописується до нього.
   function insert(text: string) {
-    if (outcome?.kind === 'result') {
-      continueAfterResult(outcome.entry, text);
-      return;
-    }
     const input = inputRef.current;
     const start = input?.selectionStart ?? expr.length;
     const end = input?.selectionEnd ?? expr.length;
@@ -160,9 +128,11 @@ export function Calculator({ decimals, reopen, onCompute, onEditEntry, onCopy }:
           ref={inputRef}
           className="expression"
           value={expr}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={(e) => {
+            setExpr(e.target.value);
+            setOutcome(null);
+          }}
           onKeyDown={handleKeyDown}
-          placeholder="Наприклад, 1250 × 3 + 15%"
           aria-label="Вираз"
           inputMode={finePointer ? 'text' : 'none'}
           autoComplete="off"
@@ -206,12 +176,6 @@ export function Calculator({ decimals, reopen, onCompute, onEditEntry, onCopy }:
       </div>
     </section>
   );
-}
-
-/** Від чого продовжувати рахунок: від самого результату, а якщо він округлений — від виразу в дужках, щоб не втратити точність. */
-function continuationBase(entry: Entry, decimals: number): string {
-  const formatted = formatValue(entry.result, decimals, entry.inexact);
-  return formatted.rounded ? `(${entry.expression})` : formatted.plain;
 }
 
 function precisionNote(formatted: Formatted, decimals: number): string {

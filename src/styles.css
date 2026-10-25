@@ -116,7 +116,7 @@ button {
 
 @media (min-width: 860px) {
   .layout {
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 340px 1fr;
   }
   .calculator {
     position: sticky;
@@ -250,16 +250,16 @@ button {
 .keypad {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 14px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .key {
-  min-height: 54px;
+  min-height: 42px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--surface);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   touch-action: manipulation;
   user-select: none;
 }
