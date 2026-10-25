@@ -1,6 +1,25 @@
 import { DEFAULT_DECIMALS, MAX_DECIMALS } from '../core/format';
 
 const DECIMALS_KEY = 'smart-calculator:decimals';
+const DRAFT_KEY = 'smart-calculator:draft';
+
+/** Вміст поля виразу, щоб після закриття застосунку продовжити з того самого місця. */
+export function loadDraft(): string {
+  try {
+    return localStorage.getItem(DRAFT_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function saveDraft(expression: string): void {
+  try {
+    if (expression) localStorage.setItem(DRAFT_KEY, expression);
+    else localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // Поле просто не відновиться після закриття.
+  }
+}
 
 export function loadDecimals(): number {
   try {

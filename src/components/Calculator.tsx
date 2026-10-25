@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEve
 import type { Entry } from '../core/entry';
 import { CalcError, evaluate, tryEvaluate, type Evaluation } from '../core/evaluate';
 import { formatValue, fullValue, type Formatted } from '../core/format';
+import { loadDraft, saveDraft } from '../storage/settings';
 import { ResultValue } from './ResultValue';
 
 interface Props {
@@ -43,7 +44,7 @@ const KEYS: Key[] = [
 const finePointer = typeof matchMedia === 'function' && matchMedia('(pointer: fine)').matches;
 
 export function Calculator({ decimals, reopen, onCompute, onEditEntry, onCopy }: Props) {
-  const [expr, setExpr] = useState('');
+  const [expr, setExpr] = useState(loadDraft);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const caretRef = useRef<number | null>(null);
@@ -66,6 +67,8 @@ export function Calculator({ decimals, reopen, onCompute, onEditEntry, onCopy }:
   useEffect(() => {
     if (reopen) update(reopen.expression);
   }, [reopen]);
+
+  useEffect(() => saveDraft(expr), [expr]);
 
   const preview = useMemo(() => {
     if (outcome || !expr.trim()) return null;
